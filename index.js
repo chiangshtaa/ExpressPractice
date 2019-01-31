@@ -1,14 +1,29 @@
 const Joi = require('joi');
+const path = require('path');
 const express = require('express');
 const app = express();
 
+const request = require('request');
+
 app.use(express.json()); // allows express to use middleware
+
+app.use(express.static(path.join(__dirname, 'client/build')));
+
 
 // hhtp methods
 // app.get();
 // app.post();
 // app.put();
 // app.delete();
+
+app.get('/here', (req, res) => {
+  request('http://jsonplaceholder.typicode.com/posts', (err, response, body) => {
+    if (err) {
+      throw err;
+    }
+    res.send(body);
+  })
+})
 
 // takes in 2 arguments.  path (url) and callback function
 app.get('/', (req, res) => {
@@ -42,6 +57,7 @@ app.get('/api/posts/:year/:month', (req, res) => {
 })
 
 
+
 // how to respond to HTTP POST requests (create new course)
 // use Postman to test post requests
 app.post('/api/courses', (req, res) => {
@@ -65,7 +81,9 @@ app.post('/api/courses', (req, res) => {
   res.send(course);
 })
 
-// update resources
+
+
+// Update resources
 app.put('/api/courses/:id', (req, res) => {
   // Look up course
   // If does not exist, return 404
@@ -112,9 +130,12 @@ app.delete('/api/courses/:id', (req, res) => {
 
   res.send(course);
 })
+
+
+
 // cant rely on 3000 to be available all the time
 // PORT
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log(`Listening on port ${port}...`);
 })
