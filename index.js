@@ -9,13 +9,6 @@ app.use(express.json()); // allows express to use middleware
 
 app.use(express.static(path.join(__dirname, 'client/build')));
 
-
-// hhtp methods
-// app.get();
-// app.post();
-// app.put();
-// app.delete();
-
 app.get('/here', (req, res) => {
   request('http://jsonplaceholder.typicode.com/posts', (err, response, body) => {
     if (err) {
@@ -25,10 +18,21 @@ app.get('/here', (req, res) => {
   })
 })
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ FROM TUTORIAL ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// hhtp methods
+// app.get();
+// app.post();
+// app.put();
+// app.delete();
+
+
 // takes in 2 arguments.  path (url) and callback function
 app.get('/', (req, res) => {
   res.send('Hello World!');
 })
+
+
 
 const courses = [
   { id: 1, name: 'course 1' },
@@ -49,6 +53,7 @@ app.get('/api/courses/:id', (req, res) => {
   }
   res.send(course);
 })
+
 // route parameters for essential or required values (req.params)
 // ? are query string parameters (?sortBy=name) => { sortBy: 'name' } for req.query
 app.get('/api/posts/:year/:month', (req, res) => {
@@ -85,16 +90,13 @@ app.post('/api/courses', (req, res) => {
 
 // Update resources
 app.put('/api/courses/:id', (req, res) => {
-  // Look up course
-  // If does not exist, return 404
+  // If course does not exist, return 404
   const course = courses.find((c) => c.id === parseInt(req.params.id));
   if (!course) {
     return res.status(404).send('The course with the given ID was not found');
   }
 
-  // Validate
-  // If invalid, return 400 - bad request
-
+  // if invalid request, return 404
   const result = validateCourse(req.body);
   // const { error } = validateCourse(req.body); // destructuring way
 
@@ -102,7 +104,6 @@ app.put('/api/courses/:id', (req, res) => {
     return res.status(400).send(result.error.details[0].message);
   }
   // Update course
-  // Return the updated course
   course.name = req.body.name;
   res.send(course);
 })
@@ -116,15 +117,13 @@ function validateCourse(course) {
 
 
 app.delete('/api/courses/:id', (req, res) => {
-  // Look up the course
-  // if it does not exist, return 404
+  // If course does not exist, return 404
   const course = courses.find((c) => c.id === parseInt(req.params.id));
   if (!course) {
     return res.status(404).send('The course with the given ID was not found');
   }
 
-  // Delete
-  // return the same course
+  // Delete course
   const index = courses.indexOf(course);
   courses.splice(index, 1);
 
